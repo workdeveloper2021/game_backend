@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
@@ -55,12 +56,10 @@ require("./app/routes/user.routes")(app);
 require("./app/routes/event.routes")(app);
 
 // set port, listen for requests
-http = require('http').createServer(app),
-port = 80;
-
-app.get('*', function (req, res, next) { res.sendFile(__dirname + '/views/index.html'); });
-
-http.listen(port, function () { console.log('App running & listening on port ' + port); });
+const PORT = process.env.PORT;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
 
 function initial() {
   Role.estimatedDocumentCount((err, count) => {
