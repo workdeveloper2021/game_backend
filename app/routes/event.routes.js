@@ -15,7 +15,7 @@ module.exports = function(app) {
   app.post("/api/events", controller.create);
   app.get("/api/events", controller.findAll);
   app.get("/api/events/:id", controller.findOne);
-  app.put("/api/events/:id", controller.update);
+  app.post("/api/events/:id", controller.update);
   app.delete("/api/events/:id", controller.delete);
   app.delete("/api/events", controller.deleteAll);
 

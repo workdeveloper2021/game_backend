@@ -15,7 +15,7 @@ exports.create = (req, res) => {
   const event = new Event({
     title: req.body.title,
     location: req.body.location,
-    // file:req.file.path,
+    file:req.body.file,
     published: req.body.published ? req.body.published : false
   });
 

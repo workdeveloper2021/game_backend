@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
-
+const multer = require('multer');
 global.__basedir = __dirname;
 const dbConfig = require("./app/config/db.config");
 
@@ -60,6 +60,26 @@ const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null,  __basedir + '/app/uploads')
+  },
+  filename: function (req, file, cb) {
+    cb(null,  file.originalname)
+  }
+})
+var upload = multer({ storage: storage })
+app.post("/api/upload", upload.single('file'), (req, res) => {
+  if (!req.file) {
+      console.log("No file upload");
+  } 
+  // else {
+  //     console.log(req.file.filename)
+  // }
+});
+
 
 function initial() {
   Role.estimatedDocumentCount((err, count) => {
