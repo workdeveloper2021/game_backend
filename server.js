@@ -1,15 +1,16 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
-const multer = require('multer');
+const multer = require("multer");
+const { randomUUID } = require("crypto");
 global.__basedir = __dirname;
 const dbConfig = require("./app/config/db.config");
 
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:8081",
 };
 
 app.use(cors(corsOptions));
@@ -24,7 +25,7 @@ app.use(
   cookieSession({
     name: "bezkoder-session",
     secret: "COOKIE_SECRET", // should use as secret environment variable
-    httpOnly: true
+    httpOnly: true,
   })
 );
 
@@ -32,15 +33,18 @@ const db = require("./app/models");
 const Role = db.role;
 
 db.mongoose
-  .connect(`mongodb+srv://game:iDGzBv8CkoBHg8gj@cluster0.lcqao5o.mongodb.net/?retryWrites=true&w=majority`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  .connect(
+    `mongodb+srv://game:iDGzBv8CkoBHg8gj@cluster0.lcqao5o.mongodb.net/?retryWrites=true&w=majority`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("Successfully connect to MongoDB.");
     initial();
   })
-  .catch(err => {
+  .catch((err) => {
     console.error("Connection error", err);
     process.exit();
   });
@@ -61,32 +65,32 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
-
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null,  __basedir + '/app/uploads')
+    cb(null, __basedir + "/app/uploads");
   },
   filename: function (req, file, cb) {
-    cb(null,  file.originalname)
-  }
-})
-var upload = multer({ storage: storage })
-app.post("/api/upload", upload.single('file'), (req, res) => {
+    cb(null, randomUUID().concat(file.originalname));
+  },
+});
+var upload = multer({ storage: storage });
+app.post("/api/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
-      console.log("No file upload");
-  } 
+    console.log("No file selected");
+  }
+  res.send({ fileName: req.file.filename });
+
   // else {
   //     console.log(req.file.filename)
   // }
 });
 
-
 function initial() {
   Role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
       new Role({
-        name: "user"
-      }).save(err => {
+        name: "user",
+      }).save((err) => {
         if (err) {
           console.log("error", err);
         }
@@ -95,8 +99,8 @@ function initial() {
       });
 
       new Role({
-        name: "moderator"
-      }).save(err => {
+        name: "moderator",
+      }).save((err) => {
         if (err) {
           console.log("error", err);
         }
@@ -105,8 +109,8 @@ function initial() {
       });
 
       new Role({
-        name: "admin"
-      }).save(err => {
+        name: "admin",
+      }).save((err) => {
         if (err) {
           console.log("error", err);
         }
